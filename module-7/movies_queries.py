@@ -9,27 +9,36 @@ config = {
     "raise_on_warnings": True
 }
 
-try:
-    db = mysql.connector.connect(**config)
 
-
-except mysql.connector.Error as err:
-    if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-        print(" The supplied username or password is invalid")
-
-    elif err.errno == errorcode.ER_BAD_DB_ERROR:
-        print(" The specified database does not exist")
-
-    else:
-        print(err)
-
+db = mysql.connector.connect(**config)
 cursor = db.cursor()
-cursor.execute(“SELECT studio, genre FROM movies”)
-cursor.execute(“SELECT films FROM movies WHERE run_time < 120”)
-cursor.execute(“SELECT director, films FROM movies GROUP BY directors”)
-films = cursor.fetchall()
-for films in movies:
-print(“Movie: {}\n Director:{}\n”.format(director[0], director[1], director[2]))
+cursor.execute("SELECT * FROM studio")
+studios = cursor.fetchall()
+print("DISPLAYING STUDIOS")
+for studio in studios:
+    print(f"Studio ID: {studio[0]}")
+    print(f"Studio Name is: {studio[1]}")
 
-finally:
-    db.close()
+cursor.execute("SELECT * FROM genre")
+print("DISPLAYING GENRES")
+genres = cursor.fetchall()
+for genre in genres:
+    print(f"Studio ID: {genre[0]}")
+    print(f"Genre Name is: {genre[1]}")
+
+cursor.execute("SELECT film_name, film_runtime FROM film WHERE film_runtime < 120")
+print("DISPLAYING MOVIES UNDER 2 HOURS")
+twohour = cursor.fetchall()
+for movie in twohour:
+    print(f"Studio ID: {movie[1]}")
+    print(f"Movie Name is: {movie[0]}")
+
+cursor.execute("SELECT film_name, film_director FROM film GROUP BY film_name, film_director ORDER BY film_director")
+director_data = cursor.fetchall()
+print("DISPLAYING DIRECTORS")
+for film in director_data:
+    print(f"Studio ID: {film[0]}")
+    print(f"Director Name is: {film[1]}")
+
+
+db.close()
